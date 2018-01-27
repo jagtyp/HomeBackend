@@ -1,0 +1,32 @@
+Nov 25 07:22:45 raspberrypi start.sh[636]: /home/pi/nodebackend/node_modules/mongodb/lib/utils.js:98
+Nov 25 07:22:45 raspberrypi start.sh[636]: process.nextTick(function() { throw err; });
+Nov 25 07:22:45 raspberrypi start.sh[636]: ^
+Nov 25 07:22:45 raspberrypi start.sh[636]: TypeError: Cannot use 'in' operator to search for '0' in arguments_marker
+Nov 25 07:22:45 raspberrypi start.sh[636]: at forEach (<anonymous>)
+Nov 25 07:22:45 raspberrypi start.sh[636]: at /home/pi/nodebackend/node_modules/mongodb/node_modules/mongodb-core/lib/connection/pool.js:200:71
+Nov 25 07:22:45 raspberrypi start.sh[636]: at Array.forEach (<anonymous>)
+Nov 25 07:22:45 raspberrypi start.sh[636]: at Pool.destroy (/home/pi/nodebackend/node_modules/mongodb/node_modules/mongodb-core/lib/connection/pool.js:198:15)
+Nov 25 07:22:45 raspberrypi start.sh[636]: at Server.destroy (/home/pi/nodebackend/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/server.js:822:15)
+Nov 25 07:22:45 raspberrypi start.sh[636]: at Server.close (/home/pi/nodebackend/node_modules/mongodb/lib/server.js:378:17)
+Nov 25 07:22:45 raspberrypi start.sh[636]: at Db.close (/home/pi/nodebackend/node_modules/mongodb/lib/db.js:350:19)
+Nov 25 07:22:45 raspberrypi start.sh[636]: at close (/home/pi/nodebackend/domain/handlers/averageHandler.js:57:10)
+Nov 25 07:22:45 raspberrypi start.sh[636]: at /home/pi/nodebackend/domain/handlers/averageHandler.js:84:9
+Nov 25 07:22:45 raspberrypi start.sh[636]: at /home/pi/nodebackend/node_modules/mongodb/lib/collection.js:860:18
+
+
+
+
+Dec 19 01:51:21 raspberrypi start.sh[13887]: /home/pi/nodebackend/domain/timers.js:57
+Dec 19 01:51:21 raspberrypi start.sh[13887]: submitData('tv_broen_airTemp', station.Measurement.Air.Temp, time);
+Dec 19 01:51:21 raspberrypi start.sh[13887]: ^
+Dec 19 01:51:21 raspberrypi start.sh[13887]: TypeError: Cannot read property 'Temp' of undefined
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at Request.request [as _callback] (/home/pi/nodebackend/domain/timers.js:57:64)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at Request.self.callback (/home/pi/nodebackend/node_modules/request/request.js:186:22)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at emitTwo (events.js:135:13)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at Request.emit (events.js:224:7)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at Request.<anonymous> (/home/pi/nodebackend/node_modules/request/request.js:1163:10)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at emitOne (events.js:125:13)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at Request.emit (events.js:221:7)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at IncomingMessage.<anonymous> (/home/pi/nodebackend/node_modules/request/request.js:1085:12)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at Object.onceWrapper (events.js:322:30)
+Dec 19 01:51:21 raspberrypi start.sh[13887]: at emitNone (events.js:120:20)
