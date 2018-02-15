@@ -25,7 +25,7 @@ client.on('message', function (topic, message) {
 
     var value = parseFloat(messageText);
     if (isNaN(value)) {
-        console.warn('Couldn\'t parse the value \'' + message + '\' to float!');
+        //console.warn('Couldn\'t parse the value \'' + message + '\' to float!');
         return;
     }
 

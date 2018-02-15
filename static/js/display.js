@@ -44,6 +44,7 @@ $(document).ready(function(){
   setTime();
   addCharts();
   getData();
+  connectMqtt();
 });
 
 function setTime(){
@@ -255,4 +256,25 @@ function setChartData(response){
 
   chart.data.labels = labels;
   chart.update();
+}
+
+function connectMqtt() {
+    var client = mqtt.connect('ws://192.168.2.161:1884'); // you add a ws:// url here
+    client.subscribe("#");
+
+    var rows = [];
+
+    client.on("message",
+        function (topic, payload) {
+            var row = '<p>' + topic + ' : ' + payload + '</p>';
+            rows.unshift(row);
+
+            if (rows.length > 10) {
+                rows.pop();
+            }
+
+            $('#mqttLog').html(rows.join(''));
+
+           // client.end();
+        });
 }

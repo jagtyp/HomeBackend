@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\api",
+    "\\domain",
+    "\\domain\\handlers",
+    "\\mqtt"
+  ],
+  "SelectedNode": "\\domain\\handlers\\alarmHandler.js",
+  "PreviewInSolutionExplorer": false
+}
