@@ -1,0 +1,18 @@
+### Add data to backend
+POST http://localhost:3001/data
+Content-Type: application/json
+
+{
+  "sensorId" : "testId",
+  "value" : 100,
+  "time" : {{$timestamp}}
+}
+
+### Add data to backend without given time
+POST http://localhost:3001/data
+Content-Type: application/json
+
+{
+  "sensorId" : "testId",
+  "value" : 100
+}

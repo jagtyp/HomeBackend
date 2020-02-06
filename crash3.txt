@@ -1,0 +1,16 @@
+Jul 19 12:17:45 raspberrypi start.sh[646]: /home/pi/nodebackend/domain/timers.js:58
+Jul 19 12:17:45 raspberrypi start.sh[646]: submitData('tv_broen_airTemp', station.Measurement.Air.Temp, time);
+Jul 19 12:17:45 raspberrypi start.sh[646]: ^
+Jul 19 12:17:45 raspberrypi start.sh[646]: TypeError: Cannot read property 'Temp' of undefined
+Jul 19 12:17:45 raspberrypi start.sh[646]: at Request.request [as _callback] (/home/pi/nodebackend/domain/timers.js:58:64)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at Request.self.callback (/home/pi/nodebackend/node_modules/request/request.js:186:22)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at emitTwo (events.js:135:13)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at Request.emit (events.js:224:7)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at Request.<anonymous> (/home/pi/nodebackend/node_modules/request/request.js:1163:10)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at emitOne (events.js:125:13)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at Request.emit (events.js:221:7)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at IncomingMessage.<anonymous> (/home/pi/nodebackend/node_modules/request/request.js:1085:12)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at Object.onceWrapper (events.js:322:30)
+Jul 19 12:17:45 raspberrypi start.sh[646]: at emitNone (events.js:120:20)
+Jul 19 12:17:45 raspberrypi systemd[1]: nodebackend.service: main process exited, code=exited, status=1/FAILURE
+Jul 19 12:17:45 raspberrypi systemd[1]: Unit nodebackend.service entered failed state.

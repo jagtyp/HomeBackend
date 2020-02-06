@@ -1,0 +1,16 @@
+Jun  1 06:35:50 raspberrypi start.sh[608]: /home/pi/nodebackend/node_modules/mongodb/lib/utils.js:98
+Jun  1 06:35:50 raspberrypi start.sh[608]: process.nextTick(function() { throw err; });
+Jun  1 06:35:50 raspberrypi start.sh[608]: ^
+Jun  1 06:35:50 raspberrypi start.sh[608]: TypeError: Cannot use 'in' operator to search for '0' in arguments_marker
+Jun  1 06:35:50 raspberrypi start.sh[608]: at forEach (<anonymous>)
+Jun  1 06:35:50 raspberrypi start.sh[608]: at /home/pi/nodebackend/node_modules/mongodb/node_modules/mongodb-core/lib/connection/pool.js:200:71
+Jun  1 06:35:50 raspberrypi start.sh[608]: at Array.forEach (<anonymous>)
+Jun  1 06:35:50 raspberrypi start.sh[608]: at Pool.destroy (/home/pi/nodebackend/node_modules/mongodb/node_modules/mongodb-core/lib/connection/pool                                             .js:198:15)
+Jun  1 06:35:50 raspberrypi start.sh[608]: at Server.destroy (/home/pi/nodebackend/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/se                                             rver.js:822:15)
+Jun  1 06:35:50 raspberrypi start.sh[608]: at Server.close (/home/pi/nodebackend/node_modules/mongodb/lib/server.js:378:17)
+Jun  1 06:35:50 raspberrypi start.sh[608]: at Db.close (/home/pi/nodebackend/node_modules/mongodb/lib/db.js:350:19)
+Jun  1 06:35:50 raspberrypi start.sh[608]: at /home/pi/nodebackend/domain/storage.js:98:10
+Jun  1 06:35:50 raspberrypi start.sh[608]: at /home/pi/nodebackend/node_modules/mongodb/lib/collection.js:504:5
+Jun  1 06:35:50 raspberrypi start.sh[608]: at /home/pi/nodebackend/node_modules/mongodb/lib/collection.js:662:5
+Jun  1 06:35:50 raspberrypi systemd[1]: nodebackend.service: main process exited, code=exited, status=1/FAILURE
+Jun  1 06:35:50 raspberrypi systemd[1]: Unit nodebackend.service entered failed state.
