@@ -16,6 +16,8 @@ var settings = {
     energyChart: 'hour'
 };
 
+var minTankTopValue = 75;
+
 function init() {
     getSettings();
     applySettings();
@@ -150,32 +152,32 @@ function addCharts() {
     // Adds energy chart
     ctx = $("#wattTodayChart").get(0).getContext("2d");
     var data = {
-       labels: [],
-       datasets: [{
-           label: 'Watt',
-           data: [],
-           backgroundColor: colors[0],
-       }]
+        labels: [],
+        datasets: [{
+            label: 'Watt',
+            data: [],
+            backgroundColor: colors[0],
+        }]
     };
 
     wattTodayChart = new Chart(ctx, {
-       type: 'horizontalBar',
-       data: JSON.parse(JSON.stringify(data)),
-       options: {
-           scales: {
-               xAxes: [{
-                   type: 'time',
-                   time: {
-                       unit: 'minute',
-                       distribution: 'linear',
-                       displayFormats: {
-                           minute: 'HH:mm'
-                       },
-                       stepSize: 20
-                   }
-               }]
-           }
-       }
+        type: 'horizontalBar',
+        data: JSON.parse(JSON.stringify(data)),
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'minute',
+                        distribution: 'linear',
+                        displayFormats: {
+                            minute: 'HH:mm'
+                        },
+                        stepSize: 20
+                    }
+                }]
+            }
+        }
     });
 
     ctx = $("#wattPerMinuteChart").get(0).getContext("2d");
@@ -342,6 +344,11 @@ function getData() {
                     $('#shuntDiff').html(temp + '&deg;C');
                 });
         }).then(function () {
+            return $.get('/data/latest?sensorId=minAccTop',
+                function (response) {
+                    minTankTopValue = response.value;
+                });
+        }).then(function () {
             return $.get('/data/latest?sensorId=tankTempTop',
                 function (response) {
                     lastTankTop = response;
@@ -414,7 +421,7 @@ function evaluateTank() {
             btm.trendDifference > 0.2)) {
         status = 'burn';
     }
-    else if (top.median < 75) {
+    else if (top.median < (minTankTopValue - 2)) {
         status = 'warn';
     }
 
@@ -499,14 +506,14 @@ function updateTodayChart(response) {
 
     wattTodayChart.data = {
         labels: [
-                "ME",
-                "SE"
-            ],
-            datasets: [
+            "ME",
+            "SE"
+        ],
+        datasets: [
             {
                 label: "Test",
                 data: [100, 75],
-                backgroundColor: ["#669911", "#119966" ],
+                backgroundColor: ["#669911", "#119966"],
                 hoverBackgroundColor: ["#66A2EB", "#FCCE56"]
             }]
     };
@@ -521,7 +528,7 @@ function updateTodayChart(response) {
     for (var i = 0; i < data.length; i++) {
         chartData.labels.push(data[i]._id);
         chartData.datasets[0].data.push(data[i].value);
-        
+
         if (i > 1) {
             break;
         }
