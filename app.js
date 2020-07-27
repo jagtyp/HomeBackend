@@ -19,7 +19,6 @@ var mqtt = require('./mqtt/mqttService');
 var routes = require('./routes');
 
 var port = 3001;
-storage.fillCache();
 
 eventHandlers.loadModules();
 

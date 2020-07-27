@@ -10,45 +10,7 @@ moment().format();
 var mongoUrl = config.credentials.mongoUrl;
 var dbName = config.credentials.databaseName;
 
-var _cachedEvents = [];
-
-exports.fillCache = function () {
-    mongoClient.connect(mongoUrl, function (err, client) {
-        if (err) {
-            console.log('Failed to connect to db');
-            console.log(err);
-            return false;
-        }
-
-        var coll = client.db(dbName).collection('events');
-        var query = { time: { $gte: moment.utc().add(-1, 'days').unix() } };
-
-        coll.find(query).sort({ time: 1 }).toArray(function (err, events) {
-            if (err) {
-                console.log('Failed to fetch items');
-                console.log(err);
-            }
-
-            if (events) {
-                for (var i = 0; i < events.length; i++) {
-                    _cachedEvents.push(events[i]);
-                }
-            }
-
-            client.close();
-
-            console.log('Filled cache with ' + _cachedEvents.length + ' events.');
-            setInterval(function () {
-                var timestamp = moment.utc().add(-1, 'days').unix();
-                removeOldFromCache(timestamp);
-            }, 60000);
-        });
-    });
-}
-
-// Gets events from the cache. If a dates are provided, events are returned
-// between,otherwise all events are returned
-exports.getCachedEvents = function (sensorId, since, until) {
+exports.getEvents = function (sensorId, since, until, callback) {
     var sinceUnix, untilUnix;
     if (since) {
         sinceUnix = moment(since).unix();
@@ -63,20 +25,29 @@ exports.getCachedEvents = function (sensorId, since, until) {
         }
     }
 
-    return _cachedEvents.filter(function (el) {
-        if (sinceUnix && el.time < sinceUnix) {
+    mongoClient.connect(mongoUrl, function (err, client) {
+        if (err) {
+            console.log('Failed to connect to db');
+            console.log(err);
+            callback(null);
             return false;
         }
 
-        if (untilUnix && el.time > untilUnix) {
-            return false;
-        }
+        var coll = client.db(dbName).collection('events');
+        var query = {
+            sensorId: { $eq: sensorId },
+            time: { $gte: sinceUnix, $lte: untilUnix }
+        };
 
-        if (sensorId && el.sensorId !== sensorId) {
-            return false;
-        }
+        coll.find(query).sort({ time: 1 }).toArray(function (err, events) {
+            if (err) {
+                console.log('Failed to fetch items');
+                console.log(err);
+            }
 
-        return true;
+            client.close();
+            callback(events);
+        });
     });
 }
 
@@ -94,9 +65,8 @@ exports.saveEvents = function (events, callback) {
                 var my_uuid = uuid.v4(null, new Buffer(16));
                 evt['_id'] = mongodb.Binary(my_uuid, mongodb.Binary.SUBTYPE_UUID);
             }
-
-            _cachedEvents.push(evt);
         }
+
         var coll = client.db(dbName).collection('events');
         coll.insertMany(events, function (err, result) {
             client.close();
@@ -149,21 +119,4 @@ exports.saveValue = function (value, callback) {
             callback(true);
         });
     });
-}
-
-// Removes old cached events
-function removeOldFromCache(timestamp) {
-    var oldEvents = [];
-    for (var i = 0; i < _cachedEvents.length; i++) {
-        var evt = _cachedEvents[i];
-        if (timestamp > evt.time) {
-            oldEvents.push(i);
-        }
-    }
-
-    oldEvents = oldEvents.reverse();
-
-    for (var i = 0; i < oldEvents.length; i++) {
-        _cachedEvents.splice(oldEvents[i], 1);
-    }
 }
