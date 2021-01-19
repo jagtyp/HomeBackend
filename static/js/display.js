@@ -5,10 +5,14 @@ var wattTodayChart = null;
 var wattPerMinuteChart = null;
 var wattPerHourChart = null;
 var wattPerDayChart = null;
+var burnerRelay = null;
 var lastTankTop = null;
 var lastTankBottom = null;
-var colors = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 1)',
-    'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)',
+var minTankTopValue = null;
+var maxTankBottomValue = null;
+var linesSet = false;
+var colors = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)',
+    'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.2)',
     'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)',
     'rgba(153,255,51,0.6)', 'rgba(255,153,0,0.6)', 'rgba(255,53,0,0.6)'];
 
@@ -104,12 +108,20 @@ function addCharts() {
     tankChart = new Chart(ctx, {
         type: "bar",
         data: tankData,
+        labels: [],
         options: {
+            layout: {
+                padding: 0
+            },
+            legend: {
+                display: false,
+            },
             scales: {
                 xAxes: [{
                     ticks: {
                         min: 60 // Edit the value according to what you need
-                    }
+                    },
+                    stacked: true
                 }],
                 yAxes: [{
                     stacked: true
@@ -302,7 +314,7 @@ function getData() {
                     $('#watt').html(watt);
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=outsideTemp',
+            return $.get('/data/latest?sensorId=tv_broen_airTemp',
                 function (response) {
                     var temp = Math.round(response.value * 100) / 100;
                     $('#outside').html(temp + ' &deg;C');
@@ -349,13 +361,23 @@ function getData() {
                     minTankTopValue = response.value;
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=tankTempTop',
+            return $.get('/data/latest?sensorId=maxAccBottom',
+                function (response) {
+                    maxTankBottomValue = response.value;
+                });
+        }).then(function () {
+            return $.get('/data/latest?sensorId=burnerControl/relayStatus',
+                function (response) {
+                    burnerRelay = response.value;
+                });
+        }).then(function () {
+            return $.get('/data/latest?sensorId=burnerControl/accTopTemp',
                 function (response) {
                     lastTankTop = response;
                     evaluateTank();
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=tankTempBottom',
+            return $.get('/data/latest?sensorId=burnerControl/accBottomTemp',
                 function (response) {
                     lastTankBottom = response;
                     evaluateTank();
@@ -375,7 +397,8 @@ function getData() {
                     tankChart.update();
                 });
         }).then(function () {
-            return $.get('/data?sensors=tankTempTop&sensors=tankTempBottom&sensors=burnerControl/boilerTemp',
+            //return $.get('/data?sensors=tankTempTop&sensors=tankTempBottom&sensors=burnerControl/boilerTemp', // Old version
+            return $.get('/data?sensors=burnerControl/boilerTemp&sensors=burnerControl/accTopTemp&sensors=burnerControl/accBottomTemp',
                 function (response) {
                     setChartData(response);
                 });
@@ -415,10 +438,13 @@ function evaluateTank() {
 
     var status = 'none';
 
-    if ((top.trend === 1 &&
-        top.trendDifference > 0.2) ||
-        (btm.trend === 1 &&
-            btm.trendDifference > 0.2)) {
+    // if ((top.trend === 1 &&
+    //     top.trendDifference > 0.2) ||
+    //     (btm.trend === 1 &&
+    //         btm.trendDifference > 0.2)) {
+    //     status = 'burn';
+    // }
+    if (burnerRelay == 1) {
         status = 'burn';
     }
     else if (top.median < (minTankTopValue - 2)) {
@@ -448,22 +474,27 @@ function setChartData(response) {
     response = response.reverse();
     for (var i = 0; i < response.length; i++) {
         var value = response[i];
+        var dataSet = chart.data.datasets[dataIndex];
+
         if (lastSensor !== value.sensorId) {
             lastSensor = value.sensorId;
             dataIndex++;
+            dataSet = chart.data.datasets[dataIndex];
 
-            if (!chart.data.datasets[dataIndex]) {
-                chart.data.datasets[dataIndex] = {
+            if (!dataSet) {
+                dataSet = {
                     label: lastSensor,
                     backgroundColor: colors[dataIndex],
                     data: [],
                     pointRadius: 0
                 };
+
+                chart.data.datasets[dataIndex] = dataSet;
             } else {
-                chart.data.datasets[dataIndex].data = [];
-                chart.data.datasets[dataIndex].label = lastSensor;
-                chart.data.datasets[dataIndex].backgroundColor = colors[dataIndex];
-                chart.data.datasets[dataIndex].pointRadius = 0;
+                dataSet.data = [];
+                dataSet.label = lastSensor;
+                dataSet.backgroundColor = colors[dataIndex];
+                dataSet.pointRadius = 0;
             }
         }
 
@@ -471,8 +502,48 @@ function setChartData(response) {
             labels.push(moment(value.time));
         }
 
-        chart.data.datasets[dataIndex].data.push(value.value);
+        dataSet.label = getLabelName(value.sensorId, value.value);
+        dataSet.data.push(value.value);
     }
+
+    function getLabelName(sensorId, value) {
+        switch (sensorId) {
+            case 'burnerControl/boilerTemp':
+                return `Panna - ${value}`;
+            case 'burnerControl/accTopTemp':
+                return `AckTop - ${value}`;
+            case 'burnerControl/accBottomTemp':
+                return `AckBotten - ${value}`;
+            default:
+                return `${sensorId} - ${value}`;
+        }
+    }
+
+    // Adds min and max lines to chart
+    // TODO: Need to make sure these are dispayed as lines and not areas
+    // if (!linesSet) {
+    //     linesSet = true;
+    //     var lines = [{
+    //         label: 'MinTop',
+    //         data: [],
+    //         backgroundColor: colors[4],
+    //         type: 'line'
+    //     }, {
+    //         label: 'MaxBottom',
+    //         data: [],
+    //         backgroundColor: colors[5],
+    //         showLine : false,
+    //         fill: false,
+    //         type: 'line'
+    //     }];
+
+    //     for (var i = 0; i < labels.length; i++) {
+    //         lines[0].data.push(minTankTopValue);
+    //         lines[1].data.push(maxTankBottomValue);
+    //     }
+    //     chart.data.datasets.push(lines[0]);
+    //     chart.data.datasets.push(lines[1]);
+    // }
 
     chart.data.labels = labels;
     chart.update();

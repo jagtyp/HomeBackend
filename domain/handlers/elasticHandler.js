@@ -27,10 +27,11 @@ exports.handle = function (event, value, cb) {
   console.log('Elatic handler called ' + index);
   console.log(clone);
 
-  client.index({
-    index: index,
-    body: clone
-  });
+  // This seems to be broken
+  // client.index({
+  //   index: index,
+  //   body: clone
+  // });
 
   cb();
 }

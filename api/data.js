@@ -41,7 +41,7 @@ exports.post = function (req, res) {
 // Executes a GET, returns the events
 exports.get = function (req, res) {
     var startTime = new Date();
-    logReq(req);
+   // logReq(req);
     var sensors = [];
     var since = /*moment('2018-03-02 00:00');*/ moment().add(-1.5, 'hours');
     var until = /*moment('2018-03-02 01:00');*/ moment().add(5, 'minutes');
@@ -101,7 +101,7 @@ exports.getLatest = function (req, res) {
     var startTime = new Date();
     var error = '';
 
-    logReq(req);
+  //  logReq(req);
 
     if (!req.query) {
         error = 'no sensor id is set (?sensorId=xx).';
