@@ -7,7 +7,7 @@ $(document).ready(function(){
 function getData(){
   $.ajax({
     //url: '/data',
-    url: '/data?sensors=shunt/outsideTemp&sensors=shunt/shuntPosition&sensors=shunt/shuntOutTemp&sensors=shunt/shuntInTemp&sensors=shunt/targetTemp',
+    url: '/data?sensors=ivt-compressorIn&sensors=ivt-compressorOut&sensors=ivt-elementIn&sensors=ivt-elementOut&sensors=ivt-element1',
     data: {},
     success: function(response){
       processDataResponse(response);

@@ -1,20 +1,23 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <META HTTP-EQUIV="refresh" CONTENT="900">
-    <!--900->
+    <!--900-->
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Display sida</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
     <!-- Darkly theme -->
-    <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/darkly/bootstrap.min.css" rel="stylesheet" integrity="sha384-kVo/Eh0sv7ZdiwZK32nRsp1FrDT3sLRLx3zVpSSTI9UdO5H02LJNLBg5F1gwvKg0" crossorigin="anonymous">
+    <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/darkly/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-kVo/Eh0sv7ZdiwZK32nRsp1FrDT3sLRLx3zVpSSTI9UdO5H02LJNLBg5F1gwvKg0" crossorigin="anonymous">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -23,14 +26,18 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
+
 <body>
     <div class="container" id="content" style="opacity : .6;">
         <span style="font-size:40px;" id="time"></span>
         <div style="font-size: 25px;">
             <table>
-                <tr style="font-size:40px;">
-                    <td>Ute: </td>
-                    <td><span id="outside"></span></td>
+                <tr>
+                    <td style="font-size:40px; vertical-align: top;">Ute: </td>
+                    <td>
+                        <span id="shuntOutside" style="font-size:40px;"></span>
+                        <small> (<span id="outside"></span>)</small>
+                    </td>
                 </tr>
                 <tr style="font-size:40px;">
                     <td>Kök: </td>
@@ -41,7 +48,7 @@
                     <td><span id="bedroomtemp"></span> / <span id="bedroomhumid"></span></td>
                 </tr>
                 <tr>
-                    <td>Ovanvåning: </td>
+                    <td>Vinberg:&nbsp;</td>
                     <td><span id="upstairstemp"></span> / <span id="upstarishumid"></span></td>
                 </tr>
             </table>
@@ -55,22 +62,35 @@
             </div>
             <div style="float:right; padding-top: 30px; margin-right:10px;">
                 <div style="top: 20px; left: 50px; position: relative; height: 0">
-                    <span id="shuntTarget" style="display: block;"></span>
-                    <span id="shuntOut" style="padding-top: 17px; display: block;"></span>
-                    <span id="shuntIn"></span>
-                    <span id="shuntDiff" style="padding-top: 17px; display: block;"></span>
+                    <span id="shuntTarget" style="display: block;" title="Target temperature"></span>
+                    <span id="shuntOut" style="padding-top: 17px; display: block;" title="Out temperature"></span>
+                    <span id="shuntIn" title="In temperature"></span>
+                    <span id="shuntDiff" style="padding-top: 17px; display: block;"
+                        title="Out and in difference"></span>
                 </div>
                 <canvas id="shuntChart" width="150" height="150"></canvas>
             </div>
         </div>
-        <div id="wattContainer" style="display: none; position: absolute; right: 50px; top: 20px; font-size: 40px;">
+        <div id="wattContainer" style="display: absolute; position: absolute; right: 50px; top: 20px; font-size: 40px;">
             Energi: <span id="watt"></span> Wh
-            <div id="wattToday" style="display: none;"><canvas id="wattTodayChart" style="height: 200px; width: 300px;"></canvas></div>
+            <div id="wattToday" style="display: none;"><canvas id="wattTodayChart"
+                    style="height: 200px; width: 300px;"></canvas></div>
             <div class="charts">
-                <div id="wattMinute" onclick="switchWattGraphTo('hour');"><canvas id="wattPerMinuteChart" style="height: 200px; width: 300px;"></canvas></div>
-                <div id="wattHour" onclick="switchWattGraphTo('day');" style="display: none;"><canvas id="wattPerHourChart" style="height: 200px; width: 300px;"></canvas></div>
-                <div id="wattDay" onclick="switchWattGraphTo('minute');" style="display: none;"><canvas id="wattPerDayChart" style="height: 200px; width: 300px;"></canvas></div>
+                <div id="wattMinute" onclick="switchWattGraphTo('hour');"><canvas id="wattPerMinuteChart"
+                        style="height: 200px; width: 300px;"></canvas></div>
+                <div id="wattHour" onclick="switchWattGraphTo('day');" style="display: none;"><canvas
+                        id="wattPerHourChart" style="height: 200px; width: 300px;"></canvas></div>
+                <div id="wattDay" onclick="switchWattGraphTo('minute');" style="display: none;"><canvas
+                        id="wattPerDayChart" style="height: 200px; width: 300px;"></canvas></div>
             </div>
+        </div>
+        <div id="printContainer" style="display:none; position: absolute; right: 15px; top: 10px; width : 45%;">
+            <div id="printProgress" class="progress" style="height: 20px; margin-bottom: 5px; font-size: larger;">
+                <div class="progress-bar" role="progressbar" style="width: 25%; font-size: medium; padding-top: 4px;"
+                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+            </div>
+            <img src="https://25.media.tumblr.com/8e752cf446947d3d01c0eaaf9e1504e2/tumblr_ml120j5dPc1r1mcxco1_400.gif"
+                style="width: 100%;" />
         </div>
 
         <div id="status" style="position : absolute; top : 40px; left : 330px;">
@@ -81,14 +101,20 @@
         <div id="mqttLog" style="margin-top: 200px;"></div>
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"
+        integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script> -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" integrity="sha256-Gn7MUQono8LUxTfRA0WZzJgTua52Udm1Ifrk5421zkA=" crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/locale/sv.js" integrity="sha256-aZaoxgvW1co/rTq6nZruQe6SPkilxZVWm6puRVHbFjs=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"
+        integrity="sha256-Gn7MUQono8LUxTfRA0WZzJgTua52Udm1Ifrk5421zkA=" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/locale/sv.js"
+        integrity="sha256-aZaoxgvW1co/rTq6nZruQe6SPkilxZVWm6puRVHbFjs=" crossorigin="anonymous"></script>
+    <!-- <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script> -->
     <script src="js/display.js"></script>
 </body>
+
 </html>

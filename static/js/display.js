@@ -1,5 +1,6 @@
 var shuntChart = null;
 var tankChart = null;
+var printerProgress = null;
 var chart = null;
 var wattTodayChart = null;
 var wattPerMinuteChart = null;
@@ -320,33 +321,38 @@ function getData() {
                     $('#outside').html(temp + ' &deg;C');
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=shuntServo',
+            return $.get('/data/latest?sensorId=shunt/outsideTemp',
+                function (response) {
+                    var temp = Math.round(response.value * 100) / 100;
+                    $('#shuntOutside').html(temp + ' &deg;C');
+                });
+        }).then(function () {
+            return $.get('/data/latest?sensorId=shunt/shuntPosition',
                 function (response) {
                     var min = 30;
                     var max = 170;
-                    var span = max - min;
-                    var value = ((response.value - min) / span) * 100;
+                    var value = response.value;
                     shuntData.datasets[0].data[0] = value;
                     shuntData.datasets[0].data[1] = 100 - value;
 
                     shuntChart.update();
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=shuntTempOut',
+            return $.get('/data/latest?sensorId=shunt/shuntOutTemp',
                 function (response) {
                     shunt.out = response.value;
                     var temp = Math.round(response.value * 100) / 100;
                     $('#shuntOut').html(temp + '&deg;C');
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=targetTemperature',
+            return $.get('/data/latest?sensorId=shunt/targetTemp',
                 function (response) {
                     shunt.out = response.value;
                     var temp = Math.round(response.value * 100) / 100;
                     $('#shuntTarget').html(temp + '&deg;C');
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=shuntTempIn',
+            return $.get('/data/latest?sensorId=shunt/shuntInTemp',
                 function (response) {
                     shunt.in = response.value;
 
@@ -398,7 +404,7 @@ function getData() {
                 });
         }).then(function () {
             //return $.get('/data?sensors=tankTempTop&sensors=tankTempBottom&sensors=burnerControl/boilerTemp', // Old version
-            return $.get('/data?sensors=burnerControl/boilerTemp&sensors=burnerControl/accTopTemp&sensors=burnerControl/accBottomTemp',
+            return $.get('/data?sensors=burnerControl/status&sensors=burnerControl/accCenterTemp&sensors=burnerControl/accTopTemp&sensors=burnerControl/accBottomTemp&sensors=burnerControl/boilerTemp',
                 function (response) {
                     setChartData(response);
                 });
@@ -418,6 +424,13 @@ function getData() {
                     updateTodayChart(response);
                     updateWattPerDay(response);
                 });
+            // }).then(function () {
+            //     return $.ajax('http://192.168.2.158/api/job', {
+            //         headers: { 'X-Api-Key': 'A43183682ECE4C0DB6D433F5EDCF618A' },
+            //         success: function (response) {
+            //             handlePrinterResponse(response);
+            //         }
+            //     });
         }).done(function () {
             console.log('Resetting timer');
             setTimeout(function () {
@@ -425,6 +438,30 @@ function getData() {
             },
                 15000);
         });
+}
+
+function handlePrinterResponse(response) {
+    // response = JSON.parse('{"job":{},"progress":{"completion": 0.11967628504760736,"filepos": 955,"printTime": 3,"printTimeLeft": null,"printTimeLeftOrigin": "linear"},"state": "Printing"}');
+
+    if (response.state === 'Printing') {
+        if ($('#printContainer').css('display') !== 'block') {
+            $('#printContainer').css('display', 'block');
+            $('#printContainer img').attr('src', 'http://192.168.2.158/webcam/?action=stream&' + Date.now());
+        }
+
+        var progress = response.progress.completion;
+        progress = Math.round(progress * 100) / 100
+        console.log(progress);
+
+        $('#printProgress .progress-bar').css('width', progress + '%');
+        $('#printProgress .progress-bar').attr('aria-valuenow', progress);
+        $('#printProgress .progress-bar').text(progress + '%');
+
+    }
+    else {
+        $('#printContainer').css('display', 'none');
+        $('#printContainer img').attr('src', 'https://25.media.tumblr.com/8e752cf446947d3d01c0eaaf9e1504e2/tumblr_ml120j5dPc1r1mcxco1_400.gif');
+    }
 }
 
 function evaluateTank() {
@@ -509,13 +546,17 @@ function setChartData(response) {
     function getLabelName(sensorId, value) {
         switch (sensorId) {
             case 'burnerControl/boilerTemp':
-                return `Panna - ${value}`;
+                return 'Panna - ' + value;
             case 'burnerControl/accTopTemp':
-                return `AckTop - ${value}`;
+                return 'AckTop - ' + value;
+            case 'burnerControl/accCenterTemp':
+                return 'AckMitten - ' + value;
             case 'burnerControl/accBottomTemp':
-                return `AckBotten - ${value}`;
+                return 'AckBotten - ' + value;
+            case 'burnerControl/status':
+                return 'Status - ' + (value == 0 ? 'Av' : 'På');
             default:
-                return `${sensorId} - ${value}`;
+                return sensorId + ' - ' + value;
         }
     }
 
