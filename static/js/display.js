@@ -513,6 +513,10 @@ function setChartData(response) {
         var value = response[i];
         var dataSet = chart.data.datasets[dataIndex];
 
+        if(value.value > 150 || value.value < -50){
+            continue;
+        }
+
         if (lastSensor !== value.sensorId) {
             lastSensor = value.sensorId;
             dataIndex++;

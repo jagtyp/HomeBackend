@@ -41,7 +41,7 @@ exports.post = function (req, res) {
 // Executes a GET, returns the events
 exports.get = function (req, res) {
     var startTime = new Date();
-   // logReq(req);
+    // logReq(req);
     var sensors = [];
     var since = /*moment('2018-03-02 00:00');*/ moment().add(-1.5, 'hours');
     var until = /*moment('2018-03-02 01:00');*/ moment().add(5, 'minutes');
@@ -67,6 +67,7 @@ exports.get = function (req, res) {
             console.log(err);
             return;
         }
+        var dbConn = new Date() - startTime;
 
         var query = {
             'time': {
@@ -88,7 +89,9 @@ exports.get = function (req, res) {
                 console.log(err);
             }
 
-            res.set('x-process-time', new Date() - startTime);
+            var dbTime = new Date() - startTime;
+            res.set('Server-Timing', 'miss, dbConn;dur=' + dbConn + ', db;dur=' + dbTime + '')
+            res.set('x-process-time', dbTime);
             res.json(values);
 
             client.close();
@@ -101,7 +104,7 @@ exports.getLatest = function (req, res) {
     var startTime = new Date();
     var error = '';
 
-  //  logReq(req);
+    //  logReq(req);
 
     if (!req.query) {
         error = 'no sensor id is set (?sensorId=xx).';
@@ -121,6 +124,8 @@ exports.getLatest = function (req, res) {
                     return;
                 }
 
+                var dbConn = new Date() - startTime;
+
                 var query = {
                     'sensorId': q.sensorId
                 };
@@ -131,7 +136,9 @@ exports.getLatest = function (req, res) {
                         console.log(err);
                     }
                     else {
-                        res.set('x-process-time', new Date() - startTime);
+                        var dbTime = new Date() - startTime;
+                        res.set('Server-Timing', 'miss, dbConn;dur=' + dbConn + ', db;dur=' + dbTime + '')
+                        res.set('x-process-time', dbTime);
                         if (values.length) {
                             if (q.part) {
                                 res.send('' + values[0][q.part]);

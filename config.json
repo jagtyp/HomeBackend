@@ -1,5 +1,5 @@
 {
-  "mongoUrl": "mongodb://192.168.2.25:27017,192.168.2.30:27017,192.168.2.30:27018/home?replicaSet=clarke",
+  "mongoUrl": "mongodb://root:RqfB6ABYDCaVfdnX@192.168.2.3/",
   "databaseName" :  "home", 
   "smsReceivers": [ "4673090065" ],
   "maToken": "fc4cd61b-35e6-4c73-a68a-c91e726f6bed",
