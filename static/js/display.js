@@ -285,25 +285,25 @@ function getData() {
             $('#inside').html(temp + ' &deg;C');
 
         }).then(function () {
-            return $.get('/data/latest?sensorId=temp2/humidity',
+            return $.get('/data/latest?sensorId=sth2/humid',
                 function (response) {
                     var temp = Math.round(response.value * 100) / 100;
                     $('#bedroomhumid').html(temp + ' %');
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=temp2/temperature',
+            return $.get('/data/latest?sensorId=sth2/temp',
                 function (response) {
                     var temp = Math.round(response.value * 100) / 100;
                     $('#bedroomtemp').html(temp + ' &deg;C');
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=temp1/humidity',
+            return $.get('/data/latest?sensorId=sth1/humid',
                 function (response) {
                     var temp = Math.round(response.value * 100) / 100;
                     $('#upstarishumid').html(temp + ' %');
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=temp1/temperature',
+            return $.get('/data/latest?sensorId=sth1/temp',
                 function (response) {
                     var temp = Math.round(response.value * 100) / 100;
                     $('#upstairstemp').html(temp + ' &deg;C');
