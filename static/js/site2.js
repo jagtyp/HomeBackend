@@ -34,7 +34,7 @@ function processDataResponse(response){
       };
     }
 
-    sets[value.sensorId].values.push(value.median);
+    sets[value.sensorId].values.push(value.value);
   }
 
   console.log(sets);

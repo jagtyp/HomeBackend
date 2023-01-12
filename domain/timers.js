@@ -20,6 +20,9 @@ exports.startTimers = function () {
 
 // Fetches data from trafikverkets open API: https://api.trafikinfo.trafikverket.se/API/Model
 function getFromTrafikverket() {
+    return;
+
+    // Doesn't work any more!
     var requestXml =
         '<REQUEST>' +
         '  <LOGIN authenticationkey="' + config.credentials.smhiToken + '" />' +

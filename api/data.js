@@ -177,34 +177,53 @@ exports.getWatt = function (req, res) {
                     error = 'Failed to connect to database: ' + err;
                     return;
                 }
+                //  db.getCollection("realtimeMeasurements_6860d51a-5474-472d-ae63-9773d2857f13").find({}, {AccumulatedConsumption : 1}).sort({$natural :-1}).limit(1)
 
-                var since = moment().add(-1, 'hours');
-                var until = moment().add(5, 'minutes');
-
-                var query = {
-                    sensorId: 'energy/watts',
-                    time: { $gt: since.toDate(), $lt: until.toDate() }
-                }
-
-                client.db(dbName).collection('values').aggregate([
-                    { $match: query },
-                    { $sort: { "time": -1 } },
-                    { $group: { _id: null, total: { $sum: "$value" } } }
-                ]).toArray(
-                    function (err, values) {
-                        if (err) {
-                            console.log('Failed to fetch latest value');
-                            console.log(err);
-                        } else {
-                            if (values.length === 0) {
-                                res.send('' + 0);
+                client.db(dbName).collection('realtimeMeasurements_6860d51a-5474-472d-ae63-9773d2857f13')
+                    .find({}).sort({ $natural: -1 }).limit(1)
+                    .toArray(
+                        function (err, values) {
+                            if (err) {
+                                console.log('Failed to fetch latest value');
+                                console.log(err);
                             } else {
-                                res.send('' + values[0].total);
+                                if (values.length === 0) {
+                                    res.send('' + 0);
+                                } else {
+                                    res.send('' + values[0].AccumulatedConsumption);
+                                }
                             }
-                        }
 
-                        client.close();
-                    });
+                            client.close();
+                        });
+
+                // var since = moment().add(-1, 'hours');
+                // var until = moment().add(5, 'minutes');
+
+                // var query = {
+                //     sensorId: 'energy/watts',
+                //     time: { $gt: since.toDate(), $lt: until.toDate() }
+                // }
+
+                // client.db(dbName).collection('values').aggregate([
+                //     { $match: query },
+                //     { $sort: { "time": -1 } },
+                //     { $group: { _id: null, total: { $sum: "$value" } } }
+                // ]).toArray(
+                //     function (err, values) {
+                //         if (err) {
+                //             console.log('Failed to fetch latest value');
+                //             console.log(err);
+                //         } else {
+                //             if (values.length === 0) {
+                //                 res.send('' + 0);
+                //             } else {
+                //                 res.send('' + values[0].total);
+                //             }
+                //         }
+
+                //         client.close();
+                //     });
             });
     }
     catch (e) { }
@@ -308,6 +327,63 @@ exports.getWattPerHour = function (req, res) {
 
 // Gets watts over time per day
 exports.getWattPerDay = function (req, res) {
+    try {
+        mongoClient.connect(mongoUrl,
+            function (err, client) {
+                if (err) {
+                    console.log('Failed to connect to db');
+                    console.log(err);
+                    error = 'Failed to connect to database: ' + err;
+                    return;
+                }
+
+                client.db(dbName).collection('realtimeMeasurements_6860d51a-5474-472d-ae63-9773d2857f13').aggregate([
+                    // {
+                    //     // TODO: Add time    
+                    //     $match: query
+                    // },
+                    {
+                        $group: {
+                            _id: { $dateToString: { date: { $toDate: "$_id" }, format: '%Y-%m-%d' } },
+                            value: { $max: "$AccumulatedConsumption" }
+                        }
+                    }, {
+                        $sort: { _id: 1 }
+                    }
+                ]).toArray(
+                    function (err, values) {
+                        if (err) {
+                            console.log('Failed to fetch latest value');
+                            console.log(err);
+                        } else {
+                            let date = moment(values[0]._id);
+                            const vals = [];
+                            for (let i = 0; i < values.length; i++) {
+                                const val = values[i];
+                                const currDate = moment(val._id);
+
+                                // Will add days with empty value when the days are missing
+                                while (date < currDate) {
+                                    vals.push({ _id: date.format('YYYY-MM-DD'), value: 0 });
+                                    date = date.add(1, 'day');
+                                }
+
+                                vals.push({ _id: val._id, value: parseFloat(val.value) })
+                                date = date.add(1, 'day');
+                            }
+
+                            res.send(JSON.stringify(vals));
+                        }
+
+                        client.close();
+                    });
+            });
+    }
+    catch (e) { }
+}
+
+// Gets watts over time per day
+exports.getWattPerDay_old = function (req, res) {
     try {
         mongoClient.connect(mongoUrl,
             function (err, client) {

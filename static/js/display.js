@@ -311,11 +311,11 @@ function getData() {
         }).then(function () {
             return $.get('/data/watt',
                 function (response) {
-                    var watt = Math.round(response);
+                    var watt = response; Math.round(response);
                     $('#watt').html(watt);
                 });
         }).then(function () {
-            return $.get('/data/latest?sensorId=tv_broen_airTemp',
+            return $.get('/data/latest?sensorId=ivt-OutdoorTemp',
                 function (response) {
                     var temp = Math.round(response.value * 100) / 100;
                     $('#outside').html(temp + ' &deg;C');
