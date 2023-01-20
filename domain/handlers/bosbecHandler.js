@@ -13,6 +13,10 @@ const authKey = '3d79fb96-4559-40cc-a7da-7d6c3989b064';
 exports.handle = function (event, value, cb) {
   console.log('Bosbec handler is called');
 
+  // Calling callback and returning, won't anything
+  cb();
+  return;
+
   // Only posting when we have proper values
   if (event.value === undefined || event.value === null || !parseInt(event.value)) {
     console.log('No proper value, wont post it');
