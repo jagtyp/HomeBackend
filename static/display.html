@@ -34,33 +34,40 @@
             <table>
                 <tr>
                     <td style="font-size:40px; vertical-align: top;">Ute: </td>
-                    <td>
+                    <td style="width:200px;">
                         <span id="shuntOutside" style="font-size:40px;"></span>
-                        <small> (<span id="outside"></span>)</small>
+                    </td>
+                    <td>
+                        <small><span id="outside"></span></small>
                     </td>
                 </tr>
-                <tr style="font-size:40px;">
-                    <td>Kök: </td>
-                    <td><span id="inside"></span></td>
+                <tr>
+                    <td style="font-size:40px;">Kök: </td>
+                    <td>
+                        <span id="inside" style="font-size:40px;"></span>
+                    </td>
+                    <td>
+                        <small><span id="insidehumid"></span></small>
+                    </td>
                 </tr>
                 <tr>
-                    <td>Vinberg 1: </td>
-                    <td><span id="bedroomtemp"></span> / <span id="bedroomhumid"></span></td>
-                </tr>
-                <tr>
-                    <td>Vinberg 2:&nbsp;</td>
-                    <td><span id="upstairstemp"></span> / <span id="upstarishumid"></span></td>
+                    <td>Vinberg: </td>
+                    <td><span id="bedroomtemp"></span>
+                    </td>
+                    <td>
+                        <small><span id="bedroomhumid"></span></small>
+                    </td>
                 </tr>
             </table>
         </div>
         <div style="padding-top: 15px;">
             <div style="float:left; width : 440px; height : 150px;">
-                <canvas id="chart" width="440" height="200"></canvas>
+                <canvas id="chart" width="440" height="300"></canvas>
             </div>
-            <div style="float:right; padding-top: 30px;">
+            <div style="float:right; padding-top: 130px;">
                 <canvas id="tankChart" width="110" height="180"></canvas>
             </div>
-            <div style="float:right; padding-top: 30px; margin-right:10px;">
+            <div style="float:right; padding-top: 130px; margin-right:10px;">
                 <div style="top: 20px; left: 50px; position: relative; height: 0">
                     <span id="shuntTarget" style="display: block;" title="Target temperature"></span>
                     <span id="shuntOut" style="padding-top: 17px; display: block;" title="Out temperature"></span>
@@ -93,7 +100,7 @@
                 style="width: 100%;" />
         </div>
 
-        <div id="status" style="position : absolute; top : 40px; left : 330px;">
+        <div id="status" style="position : absolute; top : 10px; right : 10px;">
             <div class="burning" style="display : none;"><img src="img/fire.png" width="100" height="100" /></div>
             <div class="warning" style="display : none;"><img src="img/warning.png" width="100" height="100" /></div>
             <div id="mqtt"></div>
@@ -107,7 +114,8 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
         crossorigin="anonymous"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js" integrity="sha512-zO8oeHCxetPn1Hd9PdDleg5Tw1bAaP0YmNvPY8CwcRyUk7d7/+nyElmFrB6f7vg4f7Fv4sui1mcep8RIEShczg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    <!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-colorschemes"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script> -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"
         integrity="sha256-Gn7MUQono8LUxTfRA0WZzJgTua52Udm1Ifrk5421zkA=" crossorigin="anonymous"></script>
