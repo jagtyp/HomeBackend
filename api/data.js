@@ -4,6 +4,7 @@
 var config = require('../config');
 var mongodb = require('mongodb');
 var mongoClient = mongodb.MongoClient;
+var ObjectId = mongodb.ObjectID;
 var storage = require('../domain/storage');
 var moment = require('moment');
 moment().format();
@@ -179,8 +180,12 @@ exports.getWatt = function (req, res) {
                 }
                 //  db.getCollection("realtimeMeasurements_6860d51a-5474-472d-ae63-9773d2857f13").find({}, {AccumulatedConsumption : 1}).sort({$natural :-1}).limit(1)
 
-                client.db(dbName).collection('realtimeMeasurements_6860d51a-5474-472d-ae63-9773d2857f13')
-                    .find({}).sort({ $natural: -1 }).limit(1)
+                // I want to get the latest value from the realtimeMeasurements_6860d51a-5474-472d-ae63-9773d2857f13 collection
+                // Using the _objectid as the time
+                var query = {};
+
+                client.db(dbName).collection('realtimeMeasurements_c5224c75-1b7c-47b6-b637-86dc034675b2')
+                    .find(query).sort({ $natural: -1 }).limit(1)
                     .toArray(
                         function (err, values) {
                             if (err) {
@@ -337,11 +342,15 @@ exports.getWattPerDay = function (req, res) {
                     return;
                 }
 
-                client.db(dbName).collection('realtimeMeasurements_6860d51a-5474-472d-ae63-9773d2857f13').aggregate([
-                    // {
-                    //     // TODO: Add time    
-                    //     $match: query
-                    // },
+                const query = {
+                   // _id: { $gt: ObjectId.createFromTime(Date.now() / 1000 - 60 * 60) }
+                };
+
+                client.db(dbName).collection('realtimeMeasurements_c5224c75-1b7c-47b6-b637-86dc034675b2').aggregate([
+                    {
+                        // TODO: Add time    
+                        $match: query
+                    },
                     {
                         $group: {
                             _id: { $dateToString: { date: { $toDate: "$_id" }, format: '%Y-%m-%d' } },
